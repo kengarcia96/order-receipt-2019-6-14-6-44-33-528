@@ -8,6 +8,9 @@ package org.katas.refactoring;
  */
 public class OrderReceipt {
     private Order order;
+    private static final double TAX_RATE = .10;
+    private double totalSalesTax = 0d;
+    private double totalAmount = 0d;
 
     public OrderReceipt(Order order) {
         this.order = order;
@@ -20,28 +23,24 @@ public class OrderReceipt {
         output.append(order.getCustomerName());
         output.append(order.getCustomerAddress());
 
-        double totalSalesTax = 0d;
-        double totalAmount = 0d;
         for (LineItem lineItem : order.getLineItems()) {
-            output.append(lineItem.getDescription());
-            output.append('\t');
-            output.append(lineItem.getPrice());
-            output.append('\t');
-            output.append(lineItem.getQuantity());
-            output.append('\t');
-            output.append(lineItem.totalAmount());
-            output.append('\n');
-
-            double salesTax = lineItem.totalAmount() * .10;
-            totalSalesTax += salesTax;
-
-            totalAmount += lineItem.totalAmount() + salesTax;
+            output.append(lineItem.getDescription()).append('\t');
+            output.append(lineItem.getPrice()).append('\t');
+            output.append(lineItem.getQuantity()).append('\t');
+            output.append(lineItem.totalAmount()).append('\n');
+            calculateSalesTax(lineItem);
         }
 
         output.append("Sales Tax").append('\t').append(totalSalesTax);
-
         output.append("Total Amount").append('\t').append(totalAmount);
 
         return output.toString();
+}
+
+    private void calculateSalesTax(LineItem lineItem) {
+        double salesTax = lineItem.totalAmount() * TAX_RATE;
+        totalSalesTax += salesTax;
+        totalAmount += lineItem.totalAmount() + salesTax;
     }
+
 }
